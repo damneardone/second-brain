@@ -1,0 +1,11 @@
+{
+  "active_goals": [
+    {
+      "id": "goal_1",
+      "title": "Определите вашу первую жизненную цель",
+      "description": "Замените этот текст описанием вашей цели.",
+      "priority": "high",
+      "progress_score": 0
+    }
+  ]
+}

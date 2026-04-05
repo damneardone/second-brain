@@ -1,0 +1,8 @@
+{
+  "evolution_genes": {
+    "verbosity_level": 0.5,
+    "emoji_usage": 0.8,
+    "proactive_suggestions": 0.7,
+    "moc_creation_threshold": 5
+  }
+}
