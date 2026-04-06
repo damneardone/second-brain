@@ -10,7 +10,7 @@
     body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     .hero-bg { background: linear-gradient(135deg, #18181b 0%, #27272a 100%); }
     .screenshot { transition: transform 0.3s ease; }
-    .screenshot:hover { transform: scale(1.03); }
+    .screenshot:hover { transform: scale(1.04); }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100">
@@ -28,7 +28,7 @@
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <a href="https://github.com/uussnn/second-brain" 
            class="bg-emerald-600 hover:bg-emerald-500 px-8 py-4 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3">
-          <i class="fa-brands fa-github"></i> Перейти в репозиторий
+          <i class="fa-brands fa-github"></i> Открыть репозиторий
         </a>
         <a href="#install" 
            class="bg-zinc-800 hover:bg-zinc-700 px-8 py-4 rounded-2xl font-semibold text-lg">
@@ -38,47 +38,49 @@
     </div>
   </section>
 
-  <!-- Демо / Скриншоты -->
+  <!-- Скриншоты и описания -->
   <section class="py-20 bg-zinc-900">
     <div class="max-w-6xl mx-auto px-6">
       <h2 class="text-4xl font-bold text-center mb-12">Как это выглядит в работе</h2>
       
-      <div class="grid md:grid-cols-2 gap-8">
-        <!-- Скриншот 1 -->
-        <div class="card bg-zinc-800 rounded-3xl overflow-hidden">
+      <div class="grid md:grid-cols-2 gap-10">
+        
+        <!-- 1. Dashboard -->
+        <div class="bg-zinc-800 rounded-3xl overflow-hidden">
           <img src="screenshots/dashboard.jpg" alt="Evolution Map дашборд" class="screenshot w-full">
           <div class="p-6">
-            <h3 class="font-semibold text-xl mb-2">Интерактивный Evolution Map</h3>
-            <p class="text-zinc-400">Визуализация роста GDI-lite, дерева событий, Genes и Personal Layer</p>
+            <h3 class="font-semibold text-xl mb-2">Evolution Map — как твой мозг растёт на глазах</h3>
+            <p class="text-zinc-400">Смотри, как твой Второй Мозг эволюционирует в реальном времени.</p>
           </div>
         </div>
 
-        <!-- Скриншот 2 -->
-        <div class="card bg-zinc-800 rounded-3xl overflow-hidden">
+        <!-- 2. Gmail -->
+        <div class="bg-zinc-800 rounded-3xl overflow-hidden">
           <img src="screenshots/gmail-processing.jpg" alt="Обработка Gmail" class="screenshot w-full">
           <div class="p-6">
-            <h3 class="font-semibold text-xl mb-2">Анализ Gmail со скриншота</h3>
-            <p class="text-zinc-400">Автоматическая атомизация писем и перенос в Zettelkasten</p>
+            <h3 class="font-semibold text-xl mb-2">Один скриншот письма — и вся суть уже в твоём мозге</h3>
+            <p class="text-zinc-400">Скриншот Gmail → мгновенно в atomic notes. Никакого копирования.</p>
           </div>
         </div>
 
-        <!-- Скриншот 3 -->
-        <div class="card bg-zinc-800 rounded-3xl overflow-hidden">
-          <img src="screenshots/moc-example.jpg" alt="MOC в работе" class="screenshot w-full">
+        <!-- 3. MOC -->
+        <div class="bg-zinc-800 rounded-3xl overflow-hidden">
+          <img src="screenshots/moc-example.jpg" alt="Эволюционирующие MOCs" class="screenshot w-full">
           <div class="p-6">
-            <h3 class="font-semibold text-xl mb-2">Эволюционирующие MOCs</h3>
-            <p class="text-zinc-400">Карты знаний, которые сами улучшаются и структурируются</p>
+            <h3 class="font-semibold text-xl mb-2">MOCs, которые живут и растут вместе с тобой</h3>
+            <p class="text-zinc-400">Живые карты знаний, которые сами находят связи и становятся умнее.</p>
           </div>
         </div>
 
-        <!-- Скриншот 4 -->
-        <div class="card bg-zinc-800 rounded-3xl overflow-hidden">
+        <!-- 4. Personal Review -->
+        <div class="bg-zinc-800 rounded-3xl overflow-hidden">
           <img src="screenshots/personal-review.jpg" alt="Personal Review" class="screenshot w-full">
           <div class="p-6">
-            <h3 class="font-semibold text-xl mb-2">Еженедельный Personal Review</h3>
-            <p class="text-zinc-400">Анализ твоих предпочтений и предложений по улучшению</p>
+            <h3 class="font-semibold text-xl mb-2">Personal Review — когда ИИ становится по-настоящему твоим</h3>
+            <p class="text-zinc-400">Навык анализирует твои привычки и становится всё больше «тобой».</p>
           </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -149,7 +151,12 @@
   </section>
 
   <footer class="py-12 text-center text-zinc-500 text-sm">
-    MIT License • Создано с помощью Grok (xAI)
+    <div class="mb-4">
+      <a href="https://github.com/google-ai-edge/gallery/discussions/580" class="hover:text-emerald-400 transition-colors">
+        Обсудить проект в Google AI Edge Gallery (Discussion #580)
+      </a>
+    </div>
+    MIT License • Создано с помощью Grok (xAI) • 100% on-device
   </footer>
 
 </body>
