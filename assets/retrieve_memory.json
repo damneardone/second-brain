@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "query": {
+      "type": "string",
+      "description": "Поисковый запрос или семантическая концепция для поиска в базе знаний."
+    },
+    "category_filter": {
+      "type": "string",
+      "enum": ["All", "Projects", "Areas", "Resources", "Archives"],
+      "description": "Фильтр по конкретной категории PARA. Если не уверен, используй 'All'."
+    }
+  },
+  "required": ["query"]
+}

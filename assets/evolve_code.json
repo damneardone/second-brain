@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "properties": {
+    "file_path": {
+      "type": "string",
+      "description": "Путь к локальному файлу навыка для изменения (например, SKILL.md или scripts/index.html)."
+    },
+    "new_code": {
+      "type": "string",
+      "description": "Новый полный исходный код или текст, который полностью заменит текущее содержимое файла."
+    },
+    "reason": {
+      "type": "string",
+      "description": "Аналитическое обоснование мутации (почему потребовалось изменить код)."
+    }
+  },
+  "required": ["file_path", "new_code", "reason"]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "category": {
+      "type": "string",
+      "enum": ["Projects", "Areas", "Resources", "Archives"],
+      "description": "Категория PARA для сохранения."
+    },
+    "content": {
+      "type": "string",
+      "description": "Синтезированный текст заметки, задачи или извлеченная информация."
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Список тегов для последующего векторного поиска."
+    }
+  },
+  "required": ["category", "content"]
+}

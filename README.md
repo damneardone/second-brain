@@ -1,32 +1,18 @@
-# Second Brain Agent 🧠🟢
+# Second Brain Autonomous Agent Skill (v4.0.0)
 
-The ultimate autonomous personal knowledge management assistant for the Antigravity ecosystem. Built on the **PARA Method** and optimized for the next generation of on-device AI.
+Полностью автономный on-device агент для управления знаниями по методологии PARA (Projects, Areas, Resources, Archives). Оптимизирован для моделей Gemma 4 (E2B/E4B) и работает 100% оффлайн, гарантируя абсолютную приватность ваших данных.
 
-## 🚀 Key Features
+## Установка (Sideloading) в Google AI Edge Gallery
 
-- **🛡️ 100% Offline Execution:** Your data never leaves your device. Local inference ensures maximum privacy and security.
-- **⚡ Optimized for Gemma 4:** High-performance execution tailored for Google’s latest on-device models (E2B/E4B).
-- **🔍 local Vector Search:** Powered by `sqlite-vec` for lightning-fast semantic retrieval of your notes and documents.
-- **🧬 Self-Evolution (RKC):** Features the **Recursive Knowledge Crystallization** framework. The agent learns from its own failures and successes, autonomously updating its operational rules.
-- **📁 PARA Organizational Engine:** Automatically routes information into Projects, Areas, Resources, and Archives.
+Для установки локальной версии выполните следующие шаги:
 
-## 🏗️ Architecture
+1. Установите приложение **Google AI Edge Gallery** (требуется Android 12+ или iOS 17+).
+2. Скопируйте папку `second-brain` (включая все подпапки) во внутреннюю память вашего смартфона или планшета.
+3. Откройте приложение Gallery и перейдите в раздел **Agent Skills**.
+4. Выберите опцию **"Import from local file"** и укажите путь к скопированной папке навыка.
+5. При активации навыка предоставьте ему запрошенные разрешения для доступа к файловой системе (`storage.read`, `storage.write`).
 
-- **L1 Metadata:** Strict ADK-compliant YAML frontmatter.
-- **L2 Progressive Disclosure:** Lightweight entry point with deep reference links.
-- **L3 Detailed Knowledge:** Comprehensive methodology guides (PARA, RKC) stored in `references/`.
-- **LiteRT Tools:** Future-proof JavaScript tool implementations for local execution.
-
-## 🛠️ Installation
-
-1. Clone this repository into your Antigravity skills directory:
-   `~/.gemini/antigravity/skills/second-brain/`
-2. Restart Antigravity.
-3. Trigger the agent by asking: *"Help me organize my project notes"* or *"Save this thought for later."*
-
-## 📜 License
-
-MIT License. See `LICENSE` for details.
-
----
-*Powered by Advanced Agentic Coding @ Google DeepMind*
+## Архитектура
+- **SKILL.md** — L1 Метаданные и ролевые инструкции для LLM.
+- **scripts/** — Изолированная среда выполнения (WebView) для базы данных SQLite WASM и бизнес-логики.
+- **assets/** — JSON-схемы для вызова инструментов.

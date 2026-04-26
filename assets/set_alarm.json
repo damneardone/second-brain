@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "hour": { "type": "integer", "description": "Час срабатывания будильника (0-23)." },
+    "minute": { "type": "integer", "description": "Минуты срабатывания будильника (0-59)." },
+    "message": { "type": "string", "description": "Текстовое сообщение или название задачи." }
+  },
+  "required": ["hour", "minute"]
+}

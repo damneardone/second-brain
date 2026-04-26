@@ -1,81 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Second Brain Sandbox</title>
+    <meta charset="utf-8">
+    <title>Second Brain Bridge</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
 </head>
 <body>
-    <script type="module">
-        import { initVectorDB, execute as vectorSearch } from './vector_search.js';
-        import { execute as fsOps } from './fs_operations.js';
-        import { execute as distillMemory } from './distill_memory.js';
+    <script>
+        console.log("Second Brain WebView Bridge Initialized");
+        let db;
 
-        /**
-         * Tool Router
-         * Maps tool names to their respective JS implementations.
-         */
-        const tools = {
-            'vector_search': vectorSearch,
-            'fs_operations': fsOps,
-            'distill_memory': distillMemory
-        };
-
-        /**
-         * Initialization
-         */
-        async function init() {
-            try {
-                await initVectorDB();
-                console.log("[Sandbox] System ready.");
-                
-                // Signal readiness to the host
-                window.parent.postMessage({ type: 'READY' }, '*');
-            } catch (err) {
-                console.error("[Sandbox] Init error:", err);
-            }
+        // Система Persistent Memory: Сохранение БД в IndexedDB
+        async function saveDatabase(dbBinary) {
+            return new Promise((resolve) => {
+                const request = indexedDB.open("SecondBrainDB", 1);
+                request.onupgradeneeded = (e) => e.target.result.createObjectStore("sqlite", { keyPath: "id" });
+                request.onsuccess = (e) => {
+                    const idb = e.target.result;
+                    const tx = idb.transaction("sqlite", "readwrite");
+                    tx.objectStore("sqlite").put({ id: 1, data: dbBinary });
+                    tx.oncomplete = () => resolve();
+                };
+            });
         }
 
-        /**
-         * Message Dispatcher
-         * Listens for tool calls from the LiteRT-LM runtime and routes them.
-         */
-        window.addEventListener("message", async (event) => {
-            const { callId, toolName, parameters } = event.data;
+        // Система Persistent Memory: Загрузка БД
+        async function loadDatabase() {
+            return new Promise((resolve) => {
+                const request = indexedDB.open("SecondBrainDB", 1);
+                request.onupgradeneeded = (e) => e.target.result.createObjectStore("sqlite", { keyPath: "id" });
+                request.onsuccess = (e) => {
+                    const tx = e.target.result.transaction("sqlite", "readonly");
+                    const getReq = tx.objectStore("sqlite").get(1);
+                    getReq.onsuccess = () => resolve(getReq.result ? getReq.result.data : null);
+                    getReq.onerror = () => resolve(null);
+                };
+            });
+        }
 
-            if (!callId || !toolName) return;
-
-            console.log(`[Dispatcher] Incoming call: ${toolName}`, parameters);
-
-            try {
-                const toolFunc = tools[toolName];
-                if (!toolFunc) {
-                    throw new Error(`Tool "${toolName}" not found in sandbox.`);
-                }
-
-                // Execute the tool logic
-                const result = await toolFunc(parameters);
-
-                // Post the result back to the Agent
-                window.parent.postMessage({
-                    type: 'TOOL_RESULT',
-                    callId: callId,
-                    result: result
-                }, '*');
-
-            } catch (error) {
-                console.error(`[Dispatcher] Error executing ${toolName}:`, error);
-                
-                // Post the error back to the Agent
-                window.parent.postMessage({
-                    type: 'TOOL_ERROR',
-                    callId: callId,
-                    error: error.message
-                }, '*');
-            }
+        // Инициализация
+        initSqlJs({ locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}` }).then(async function(SQL) {
+            const savedData = await loadDatabase();
+            db = savedData ? new SQL.Database(savedData) : new SQL.Database();
+            db.run("CREATE TABLE IF NOT EXISTS memory (id INTEGER PRIMARY KEY, category TEXT, content TEXT, tags TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);");
+            console.log(savedData ? "Persistent Memory restored." : "New DB created.");
         });
 
-        // Start initialization
-        init();
+        // Глобальный оркестратор инструментов
+        window.onToolCall = async function(toolName, parameters) {
+            if (!db) return JSON.stringify({ status: "error", message: "Система памяти еще инициализируется." });
+
+            try {
+                const args = typeof parameters === 'string' ? JSON.parse(parameters) : parameters;
+
+                if (toolName === 'save_to_para') {
+                    const tagsStr = args.tags && Array.isArray(args.tags) ? args.tags.join(',') : '';
+                    db.run("INSERT INTO memory (category, content, tags) VALUES (?,?,?)", [args.category, args.content, tagsStr]);
+                    await saveDatabase(db.export()); // Синхронизируем с диском
+                    return JSON.stringify({ status: "success", message: `Успешно сохранено в ${args.category}` });
+                }
+
+                if (toolName === 'retrieve_memory') {
+                    const catFilter = (args.category_filter && args.category_filter !== "All") ? `AND category = '${args.category_filter}'` : "";
+                    const searchTerm = `%${args.query}%`;
+                    
+                    // Гибридный линейный поиск (контент + теги)
+                    const results = db.exec(`SELECT category, content, timestamp FROM memory WHERE (content LIKE ? OR tags LIKE ?) ${catFilter} ORDER BY timestamp DESC LIMIT 5`, [searchTerm, searchTerm]);
+
+                    if (results.length === 0) return JSON.stringify({ status: "success", data: "В памяти ничего не найдено по этому запросу." });
+                    
+                    const rows = results[0].values.map(row => ({ category: row[0], content: row[1], date: row[2] }));
+                    return JSON.stringify({ status: "success", results: rows });
+                }
+
+                if (toolName === 'create_calendar_event') {
+                    try {
+                        const beginTime = new Date(args.startTime).getTime();
+                        const endTime = args.endTime ? new Date(args.endTime).getTime() : beginTime + 3600000; // По умолчанию 1 час
+                        
+                        // Формируем Android Intent URI для открытия системного календаря
+                        const intentUri = `intent://com.android.calendar/events#Intent;scheme=content;type=vnd.android.cursor.item/event;S.title=${encodeURIComponent(args.title)};S.description=${encodeURIComponent(args.description || '')};l.beginTime=${beginTime};l.endTime=${endTime};end`;
+
+                        // Вызываем интент в текущем окне (WebView передаст его в ОС)
+                        window.open(intentUri, '_top');
+                        
+                        return JSON.stringify({ status: "success", message: `Событие "${args.title}" отправлено в системный календарь.` });
+                    } catch (e) {
+                        return JSON.stringify({ status: "error", message: "Ошибка вызова календаря: " + e.toString() });
+                    }
+                }
+
+                if (toolName === 'create_contact') {
+                    try {
+                        const name = args.name ? `S.name=${encodeURIComponent(args.name)};` : '';
+                        const phone = args.phone ? `S.phone=${encodeURIComponent(args.phone)};` : '';
+                        const email = args.email ? `S.email=${encodeURIComponent(args.email)};` : '';
+                        const intentUri = `intent:#Intent;action=android.intent.action.INSERT;type=vnd.android.cursor.dir/contact;${name}${phone}${email}end`;
+                        window.open(intentUri, '_top');
+                        return JSON.stringify({ status: "success", message: `Открыто окно создания контакта: ${args.name}` });
+                    } catch (e) {
+                        return JSON.stringify({ status: "error", message: "Ошибка: " + e.toString() });
+                    }
+                }
+
+                if (toolName === 'set_alarm') {
+                    try {
+                        const msg = args.message ? `S.android.intent.extra.alarm.MESSAGE=${encodeURIComponent(args.message)};` : '';
+                        const intentUri = `intent:#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR=${args.hour};i.android.intent.extra.alarm.MINUTES=${args.minute};${msg}end`;
+                        window.open(intentUri, '_top');
+                        return JSON.stringify({ status: "success", message: `Будильник установлен на ${args.hour}:${args.minute}` });
+                    } catch (e) {
+                        return JSON.stringify({ status: "error", message: "Ошибка: " + e.toString() });
+                    }
+                }
+
+                if (toolName === 'send_sms') {
+                    try {
+                        const intentUri = `intent:smsto:${args.phone}#Intent;action=android.intent.action.SENDTO;S.sms_body=${encodeURIComponent(args.message)};end`;
+                        window.open(intentUri, '_top');
+                        return JSON.stringify({ status: "success", message: `Окно SMS для ${args.phone} подготовлено.` });
+                    } catch (e) {
+                        return JSON.stringify({ status: "error", message: e.toString() });
+                    }
+                }
+
+                if (toolName === 'device_control') {
+                    try {
+                        let intentUri;
+                        if (args.action === 'toggle_music') {
+                            // Используем стандартный KeyEvent для переключения медиа (Play/Pause)
+                            intentUri = `intent:#Intent;action=android.intent.action.MEDIA_BUTTON;i.android.intent.extra.KEY_EVENT=85;end`;
+                        } else if (args.action === 'toggle_flashlight') {
+                            // Фонарик вызывается через внутренний мост приложения, если доступен, 
+                            // либо через эмуляцию интента настроек
+                            intentUri = `intent:#Intent;action=android.settings.DISPLAY_SETTINGS;end`; // Заглушка для перехода в настройки
+                        }
+                        window.open(intentUri, '_top');
+                        return JSON.stringify({ status: "success", message: `Команда ${args.action} отправлена.` });
+                    } catch (e) {
+                        return JSON.stringify({ status: "error", message: e.toString() });
+                    }
+                }
+            } catch (e) {
+                return JSON.stringify({ status: "error", message: e.toString() });
+            }
+            return JSON.stringify({ status: "error", message: "Unknown tool: " + toolName });
+        };
     </script>
 </body>
 </html>
