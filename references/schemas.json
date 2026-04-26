@@ -1,0 +1,46 @@
+{
+  "genes": {
+    "description": "Internal evolutionary parameters affecting agent response style.",
+    "format": {
+      "evolution_genes": {
+        "verbosity": "float (0.0 - 1.0)",
+        "emoji": "float (0.0 - 1.0)"
+      }
+    }
+  },
+  "preferences": {
+    "description": "Long-term user profile and synthesized habits.",
+    "format": "JSON object with hierarchical keys"
+  },
+  "events": {
+    "description": "Log of actions and memory events. Parsed for distillation.",
+    "format": {
+      "timestamp": "ISO 8601 string",
+      "event": "string",
+      "details": "string"
+    }
+  },
+  "evolution_history": {
+    "description": "Changelog of genetic and prompt mutations.",
+    "format": {
+      "timestamp": "ISO 8601 string",
+      "version": "string",
+      "change_type": "string"
+    }
+  },
+  "goals": {
+    "description": "Active user goals for alignment checking.",
+    "format": {
+      "active_goals": [
+        {
+          "id": "string",
+          "title": "string"
+        }
+      ]
+    }
+  },
+  "capsules": {
+    "description": "Array of saved atomic notes and collective knowledge.",
+    "format": "Array of JSON objects representing atomic notes"
+  }
+}

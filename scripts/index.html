@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Second Brain Sandbox</title>
+</head>
+<body>
+    <script type="module">
+        import { initVectorDB, execute as vectorSearch } from './vector_search.js';
+        import { execute as fsOps } from './fs_operations.js';
+        import { execute as distillMemory } from './distill_memory.js';
+
+        /**
+         * Tool Router
+         * Maps tool names to their respective JS implementations.
+         */
+        const tools = {
+            'vector_search': vectorSearch,
+            'fs_operations': fsOps,
+            'distill_memory': distillMemory
+        };
+
+        /**
+         * Initialization
+         */
+        async function init() {
+            try {
+                await initVectorDB();
+                console.log("[Sandbox] System ready.");
+                
+                // Signal readiness to the host
+                window.parent.postMessage({ type: 'READY' }, '*');
+            } catch (err) {
+                console.error("[Sandbox] Init error:", err);
+            }
+        }
+
+        /**
+         * Message Dispatcher
+         * Listens for tool calls from the LiteRT-LM runtime and routes them.
+         */
+        window.addEventListener("message", async (event) => {
+            const { callId, toolName, parameters } = event.data;
+
+            if (!callId || !toolName) return;
+
+            console.log(`[Dispatcher] Incoming call: ${toolName}`, parameters);
+
+            try {
+                const toolFunc = tools[toolName];
+                if (!toolFunc) {
+                    throw new Error(`Tool "${toolName}" not found in sandbox.`);
+                }
+
+                // Execute the tool logic
+                const result = await toolFunc(parameters);
+
+                // Post the result back to the Agent
+                window.parent.postMessage({
+                    type: 'TOOL_RESULT',
+                    callId: callId,
+                    result: result
+                }, '*');
+
+            } catch (error) {
+                console.error(`[Dispatcher] Error executing ${toolName}:`, error);
+                
+                // Post the error back to the Agent
+                window.parent.postMessage({
+                    type: 'TOOL_ERROR',
+                    callId: callId,
+                    error: error.message
+                }, '*');
+            }
+        });
+
+        // Start initialization
+        init();
+    </script>
+</body>
+</html>

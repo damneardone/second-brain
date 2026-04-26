@@ -1,0 +1,9 @@
+{
+  "searcher": "LiteRT_ScaNN",
+  "embedding_model": "lite-rt/text-embedding-v1",
+  "index_type": "AHardwareBuffer",
+  "distance_measure": "DOT_PRODUCT",
+  "num_leaves": 100,
+  "num_leaves_to_search": 10,
+  "memory_backend": "SQLite_VSS"
+}

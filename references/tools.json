@@ -1,0 +1,61 @@
+[
+  {
+    "name": "para_create_project",
+    "description": "JSON-RPC contract to create a new project folder under PARA methodology.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "project_name": {
+          "type": "string",
+          "description": "Name of the project."
+        },
+        "deadline": {
+          "type": "string",
+          "description": "Optional deadline in ISO format."
+        }
+      },
+      "required": ["project_name"]
+    }
+  },
+  {
+    "name": "para_route_resource",
+    "description": "JSON-RPC contract to route an incoming note/asset to a specific PARA category (Projects, Areas, Resources, or Archives).",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "content_id": {
+          "type": "string",
+          "description": "ID of the note or asset."
+        },
+        "target_category": {
+          "type": "string",
+          "enum": ["Projects", "Areas", "Resources", "Archives"]
+        },
+        "subcategory": {
+          "type": "string",
+          "description": "Specific folder inside the main category."
+        }
+      },
+      "required": ["content_id", "target_category"]
+    }
+  },
+  {
+    "name": "memory_query",
+    "description": "Query the persistent SQLite/ScaNN memory for facts.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "query_string": {
+          "type": "string",
+          "description": "Semantic string to search in the knowledge base."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Max number of results to return.",
+          "default": 5
+        }
+      },
+      "required": ["query_string"]
+    }
+  }
+]

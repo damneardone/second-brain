@@ -1,0 +1,15 @@
+{
+  "api": "CompiledModel",
+  "backend": "NPU",
+  "zero_copy": true,
+  "hardware_buffer": "AHardwareBuffer",
+  "delegates": [
+    "Qualcomm_QNN",
+    "Kirin_NPU"
+  ],
+  "hybrid_attention": {
+    "enabled": true,
+    "local_window": 1024,
+    "global_layers": [2, 6, 10, 14]
+  }
+}
