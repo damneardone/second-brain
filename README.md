@@ -1,3 +1,5 @@
+#### *All files were translated to English using Gemini 3*
+
 # Second Brain Autonomous Agent Skill (v4.0.0)
 
 A fully autonomous on-device knowledge management agent based on the PARA methodology (Projects, Areas, Resources, Archives). Optimized for Gemma 4 (E2B/E4B) models and operates 100% offline, guaranteeing absolute privacy for your data.
