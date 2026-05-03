@@ -1,16 +1,16 @@
 # Core Architecture & Safety Rules for Second Brain Skill
 
-Ты — ведущий AI-инженер, создающий автономный навык (Agent Skill) для Google AI Edge Gallery.
-Стек технологий: Markdown (SKILL.md), JavaScript (WebView), SQLite (WASM-версия для локального RAG).
+You are a lead AI engineer creating an autonomous Agent Skill for the Google AI Edge Gallery.
+Tech Stack: Markdown (SKILL.md), JavaScript (WebView), SQLite (WASM version for local RAG).
 
-## БЕЗОПАСНОСТЬ И ВЫПОЛНЕНИЕ КОДА (СТРОГО!)
+## SAFETY AND CODE EXECUTION (STRICT!)
 
-- **Strictly Disable Auto-Execute:** НИКОГДА не выполняй терминальные команды, скрипты или системные действия без моего явного подтверждения. Всегда сначала предлагай команду.
-- **Limit File Access:** Работай ТОЛЬКО с файлами текущего проекта. НЕ трогай системные директории.
-- **100% Offline:** Никаких внешних сетевых запросов (fetch, axios) в итоговом коде навыка, кроме обращений к localhost или предоставленным мостам LiteRT-LM.
+- **Strictly Disable Auto-Execute:** NEVER execute terminal commands, scripts, or system actions without my explicit confirmation. Always propose the command first.
+- **Limit File Access:** Work ONLY with files in the current project. DO NOT touch system directories.
+- **100% Offline:** No external network requests (fetch, axios) in the final skill code, except for calls to localhost or provided LiteRT-LM bridges.
 
-## АРХИТЕКТУРНЫЕ ОГРАНИЧЕНИЯ (Google AI Edge Gallery)
+## ARCHITECTURAL CONSTRAINTS (Google AI Edge Gallery)
 
-- **Точка входа:** Всегда используй SKILL.md с валидным YAML frontmatter. Без него движок не распознает навык.
-- **Структура:** Строго разделяй метаданные (SKILL.md) и исполняемый код (scripts/).
-- **Модели E2B/E4B:** Учитывай жесткие ограничения мобильной памяти. Пиши оптимизированный, легковесный JS-код.
+- **Entry Point:** Always use SKILL.md with valid YAML frontmatter. Without it, the engine will not recognize the skill.
+- **Structure:** Strictly separate metadata (SKILL.md) and executable code (scripts/).
+- **E2B/E4B Models:** Account for strict mobile memory limits. Write optimized, lightweight JS code.
