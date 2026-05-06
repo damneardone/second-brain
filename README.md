@@ -1,4 +1,4 @@
-#### *All files were translated to English using Gemini 3*
+#### $\color{red}{\text{All files were translated to English using Gemini 3}}$
 
 # Second Brain Autonomous Agent Skill (v4.0.0)
 
